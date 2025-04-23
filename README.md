@@ -21,11 +21,11 @@ This prototype demonstrates:
 > "Remote Start isn’t working" — before the user submits this as a support ticket, the assistant:
 
 1. **Inspects recent user actions** ("user tapped Remote Start 2x")
-2. **Checks car configuration** ("feature not supported on current model")
+2. **Checks car configuration** ("feature not yet enabled by user")
 3. **Verifies subscription status** ("remote services expired last week")
-4. **Looks for outages** ("known issue impacting 2023 CLA over 5G in West region")
-5. **Retrieves similar known resolutions** (via [bedrock-kb-prototype](https://github.com/RoyCodes/bedrock-kb-prototype))
-6. **Summarizes a response** to the user and recommends action—or solves it.
+4. **Looks for outages** ("known issue impacting 5G connectivity in US West region")
+5. **Retrieves similar issues from knowledge base** (via [bedrock-kb-prototype](https://github.com/RoyCodes/bedrock-kb-prototype))
+6. **Summarizes a response** to the user and recommends actions, or solves it.
 
 ---
 
@@ -51,37 +51,15 @@ This prototype demonstrates:
 
 ### 🚀 Stack
 
-Component
-
-Tool
-
-Orchestration
-
-Model Context Protocol (MCP)
-
-Reasoning Engine
-
-LangChain (local or Bedrock LLM)
-
-Agent Orchestration
-
-crew.ai
-
-Prompt Evaluation
-
-promptfoo
-
-RAG Knowledge Base
-
-bedrock-kb-prototype
-
-Infrastructure
-
-AWS Lambda + API Gateway via CDK (TypeScript)
-
-Model Hosting
-
-Ollama / Bedrock / OpenRouter (pluggable)
+| Component  | Tool |
+| ------------- | ------------- |
+| Orchestration | Model Context Protocol (MCP)  |
+| Reasoning Engine  | LangChain (local or Bedrock LLM)  |
+| Agent Orchestration | crew.ai | 
+| Prompt Engineering & Evaluation | promptfoo |
+| RAG Knowledge Base | bedrock-kb-prototype |
+| Infrastructure | AWS Lambda + API Gateway |
+| Model Hosting | Ollama / Bedrock / OpenRouter (pluggable) |
 
 ### 🔧 Setup
 
@@ -89,41 +67,11 @@ Coming soon: Full CDK + deployment instructions.
 
 You can run LangChain logic + crew.ai planner locally and mock API Gateway inputs to simulate the MCP payload.
 
-### Attempting to start with fresh repo instead of cloning from AWS template
-1. create repo 
-2. create Amplify Gen 2 project in AWS Console and point to repo
-3. run `npm create amplify@latest` in app's root folder.
-4. 
-
-### 🎓 Skills Demonstrated
-
-Capability
-
-Demonstrated In
-
-Agentic Workflow Design
-
-Multi-agent crew.ai + MCP server structure
-
-Prompt Engineering & Evaluation
-
-promptfoo output comparison
-
-Retrieval-Augmented Generation
-
-Linked knowledge base (Bedrock KB prototype)
-
-LLM Integration
-
-LangChain with local or cloud-hosted models
-
-Cloud-Native AI Stack
-
-CDK + Lambda + API Gateway deployment
-
-Modular System Design
-
-Each diagnostic is an independent MCP server
+### General Tutorial for Building Similar Projects:
+1. create a fresh GitHub repo 
+2. create Amplify Gen 2 project from within the AWS Console and point it to fresh repo
+3. from CLI, run `npm create amplify@latest` in repo's root folder.
+4. `git push` and check Amplify console to ensure that deployment worked.
 
 ### 🔹 Appendix: Ambient Computing Extension
 
