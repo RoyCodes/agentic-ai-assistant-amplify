@@ -1,0 +1,34 @@
+{
+  "name": "agentic-ai-automotive-support-assistant",
+  "version": "1.0.0",
+  "description": "An AI prototype that proactively identifies and resolves vehicle issues before a support case is created. This system uses a modular, MCP-compliant architecture, multi-agent coordination, and LLM-based reasoning to reduce customer friction and support load.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoyCodes/agentic-ai-automotive-support-assistant.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/RoyCodes/agentic-ai-automotive-support-assistant/issues"
+  },
+  "homepage": "https://github.com/RoyCodes/agentic-ai-automotive-support-assistant#readme",
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.14.3",
+    "@aws-amplify/backend-cli": "^1.5.0",
+    "aws-cdk": "^2.1003.0",
+    "aws-cdk-lib": "^2.180.0",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.25.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "aws-amplify": "^6.14.3"
+  }
+}

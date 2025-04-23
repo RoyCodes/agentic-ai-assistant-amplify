@@ -89,6 +89,12 @@ Coming soon: Full CDK + deployment instructions.
 
 You can run LangChain logic + crew.ai planner locally and mock API Gateway inputs to simulate the MCP payload.
 
+### Attempting to start with fresh repo instead of cloning from AWS template
+1. create repo 
+2. create Amplify Gen 2 project in AWS Console and point to repo
+3. run `npm create amplify@latest` in app's root folder.
+4. 
+
 ### 🎓 Skills Demonstrated
 
 Capability
