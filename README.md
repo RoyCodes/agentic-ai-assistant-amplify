@@ -72,6 +72,28 @@ You can run LangChain logic + crew.ai planner locally and mock API Gateway input
 2. create Amplify Gen 2 project from within the AWS Console and point it to fresh repo
 3. from CLI, run `npm create amplify@latest` in repo's root folder.
 4. `git push` and check Amplify console to ensure that deployment worked.
+5. Add Vite frontend in `/frontend` via `npm create vite@latest frontend -- --template react-ts`
+6. Back in the Amplify console, update the `amplify.yml` to the following so that deployments will build the frontend and the domain will point to the new index:
+
+```
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd frontend
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: frontend/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - frontend/node_modules/**/*
+```
+7. Now commit, check the domain link after the deployment and you should see the react + vite + typescript template hosted from your app now. 
 
 ### 🔹 Appendix: Ambient Computing Extension
 
