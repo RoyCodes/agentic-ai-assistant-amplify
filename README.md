@@ -94,6 +94,8 @@ frontend:
       - frontend/node_modules/**/*
 ```
 7. Now commit, check the domain link after the deployment and you should see the react + vite + typescript template hosted from your app now. 
+8. From within the frontend folder, grab the amplify ui react package so we can use it's components:
+`npm install @aws-amplify/ui-react`
 
 ### 🔹 Appendix: Ambient Computing Extension
 
