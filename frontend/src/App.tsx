@@ -1,3 +1,4 @@
+import { Authenticator } from "@aws-amplify/ui-react";
 import { useState } from 'react'
 import { 
   View, 
@@ -10,6 +11,8 @@ import {
   Divider, 
   Accordion, 
 } from '@aws-amplify/ui-react';
+import "@aws-amplify/ui-react/styles.css";
+import "./index.css"
 
 function App() {
   const [problem, setProblem] = useState('');
@@ -31,7 +34,10 @@ function App() {
   };
 
   return (
-    <View padding="2rem">
+    <Authenticator>
+    {({ signOut }) => (
+      <main>
+        <View>
       <Flex direction="column" gap="2rem">
         <Heading level={3}>Simulate a Vehicle Problem</Heading>
 
@@ -83,7 +89,11 @@ function App() {
           </Card>
         )}
       </Flex>
-    </View>
+      <Button onClick={signOut}> Sign out </Button>
+      </View>
+    </main>
+      )}
+    </Authenticator>
   );
 }
 
