@@ -1,6 +1,7 @@
 // import * as React from "react";
-// import { post } from 'aws-amplify/api';
-// import { fetchAuthSession } from 'aws-amplify/auth';
+import { post } from 'aws-amplify/api';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 import { 
   View, 
   Heading, 
@@ -24,18 +25,60 @@ const [chainOfThought, setChainOfThought] = useState<string[]>([]);
 
 // Logic
   const handleHelpClick = async () => {
-    // Placeholder: this would later trigger your MCP client call
-    const simulatedResult = `We detected a problem: ${problem}. Here's what you should do...`;
-    const simulatedChain = [
-      'Checked car configuration — OK',
-      'Checked subscription — Expired',
-      'Determined likely cause — Subscription issue',
-      'Generated response to user'
-    ];
+  try {
+    const session = await fetchAuthSession();
+    const token = session.tokens?.accessToken?.toString();
 
-    setResult(simulatedResult);
-    setChainOfThought(simulatedChain);
-  };
+    const restOperation = post({
+      apiName: 'HelpApi', // ← Must match name in amplify_outputs.json
+      path: '/help',
+      options: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: {
+          jsonrpc: "2.0",
+          method: "helpRequest",
+          params: {
+            problemType: problem,
+            timestamp: new Date().toISOString(),
+          },
+          id: "request-001"
+        }
+      }
+    });
+
+    const { body } = await restOperation.response;
+    const rawResponse = await body.text();
+    const json = JSON.parse(rawResponse);
+
+    if (json?.result) {
+      setResult(json.result);         // should be "OK" for now
+      setChainOfThought([]);          // will fill later
+    } else {
+      setResult("Unexpected response format.");
+      setChainOfThought([]);
+    }
+
+  } catch (err) {
+    console.error("POST /help failed:", err);
+    setResult("Error sending help request.");
+    setChainOfThought([]);
+  }
+};
+
+  //   // Placeholder: this would later trigger your MCP client call
+  //   const simulatedResult = `We detected a problem: ${problem}. Here's what you should do...`;
+  //   const simulatedChain = [
+  //     'Checked car configuration — OK',
+  //     'Checked subscription — Expired',
+  //     'Determined likely cause — Subscription issue',
+  //     'Generated response to user'
+  //   ];
+
+  //   setResult(simulatedResult);
+  //   setChainOfThought(simulatedChain);
+  // };
 
 // Render
 return (
