@@ -21,10 +21,11 @@ export default function Troubleshooter() {
 const [problem, setProblem] = useState('');
 const [result, setResult] = useState('');
 const [chainOfThought, setChainOfThought] = useState<string[]>([]);
-
+const [isLoading, setIsLoading] = useState(false);
 
 // Logic
   const handleHelpClick = async () => {
+    setIsLoading(true);
   try {
     const session = await fetchAuthSession();
     const token = session.tokens?.accessToken?.toString();
@@ -64,6 +65,8 @@ const [chainOfThought, setChainOfThought] = useState<string[]>([]);
     console.error("POST /help failed:", err);
     setResult("Error sending help request.");
     setChainOfThought([]);
+  } finally {
+    setIsLoading(false);
   }
 };
 
@@ -103,9 +106,9 @@ return (
         <Button 
           variation="primary" 
           onClick={handleHelpClick}
-          isDisabled={!problem}
+          isDisabled={!problem || isLoading}
         >
-          Help Me
+          {isLoading ? 'Loading...' : 'Help Me'}
         </Button>
 
         {result && (
