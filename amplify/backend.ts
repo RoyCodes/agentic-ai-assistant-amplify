@@ -2,6 +2,7 @@ import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { helpOrchestrator } from './functions/helpOrchestrator/resource';
+import { subscriptionChecker } from './functions/subscriptionChecker/resource';
 import { Stack } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import {
@@ -20,7 +21,8 @@ import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations
 const backend = defineBackend({
   auth,
   data,
-  helpOrchestrator
+  helpOrchestrator,
+  subscriptionChecker
 });
 
 // Create an API stack for client -> helpOrchestrator
