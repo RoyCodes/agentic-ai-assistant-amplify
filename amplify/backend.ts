@@ -55,6 +55,16 @@ const helpLambdaIntegration = new HttpLambdaIntegration(
   backend.helpOrchestrator.resources.lambda
 );
 
+// Allow helpOrchestrator to call subscriptionChecker
+backend.helpOrchestrator.resources.lambda.addToRolePolicy(
+  new iam.PolicyStatement({
+    actions: ['lambda:InvokeFunction'],
+    resources: [
+      backend.subscriptionChecker.resources.lambda.functionArn
+    ]
+  })
+);
+
 // Add /help route
 helpHttpApi.addRoutes({
   path: '/help',
