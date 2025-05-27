@@ -19,22 +19,27 @@ export const handler: Handler = async (event) => {
 
     const vehicleId = body.params?.vehicleId ?? 'demo-vehicle';
 
+
+    const subscriptionCheckerPayload = {
+      jsonrpc: '2.0',
+      method: 'subscriptionChecker',
+      params: { vehicleId },
+      id: body.id || 'help-orchestrator-request' 
+    };
+
     // call the subscription checker
     const command = new InvokeCommand({
       FunctionName: SUBSCRIPTION_CHECKER_FUNCTION_NAME,
-      Payload: Buffer.from(JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'subscriptionChecker',
-        params: { vehicleId },
-        id: 'tool-001'
-      })),
+      InvocationType: 'RequestResponse',
+      Payload: Buffer.from(JSON.stringify(subscriptionCheckerPayload)),
     });
     
     const response = await lambda.send(command);
     console.log("Raw Lambda response from subscriptionChecker:", response);
 
     const responseString = new TextDecoder().decode(response.Payload);
-    const subStatus = JSON.parse(responseString);
+    const subCheckerResponse = JSON.parse(responseString);
+    console.log("Parsed subscriptionChecker response:", subCheckerResponse);
 
     return {
       statusCode: 200,
