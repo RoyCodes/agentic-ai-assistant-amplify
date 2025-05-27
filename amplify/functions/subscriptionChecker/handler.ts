@@ -14,6 +14,9 @@ export const handler: Handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         jsonrpc: '2.0',
         result: {
@@ -25,14 +28,17 @@ export const handler: Handler = async (event, context) => {
   } catch (err) {
     console.error("checkSubscriptionStatus failed:", err);
     return {
-      statusCode: 400,
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         jsonrpc: '2.0',
         error: {
           code: -32603,
-          message: 'Internal error'
+          message: 'Internal error in subscriptionChecker'
         },
-        id: null
+        id: event.body?.id ?? null
       })
     };
   }

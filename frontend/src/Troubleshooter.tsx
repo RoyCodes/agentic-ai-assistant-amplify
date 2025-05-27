@@ -54,34 +54,29 @@ const [isLoading, setIsLoading] = useState(false);
     const json = JSON.parse(rawResponse);
 
     if (json?.result) {
-      setResult(json.result);         // should be "OK" for now
-      setChainOfThought([]);          // will fill later
-    } else {
+      // If a result is present, display it (stringifying the object for readability)
+      setResult(JSON.stringify(json.result, null, 2));
+      setChainOfThought([]); // Reset or populate chain of thought here
+    } else if (json?.error) {
+
+      // If an error is present, display the error message
+      setResult(`Error: ${json.error.message} (Code: ${json.error.code})`);
+      setChainOfThought([]);
+      console.error("JSON-RPC Error received:", json.error);
+    }
+     else {
       setResult("Unexpected response format.");
       setChainOfThought([]);
     }
 
   } catch (err) {
     console.error("POST /help failed:", err);
-    setResult("Error sending help request.");
+    setResult("Error sending help request or network issue.");
     setChainOfThought([]);
   } finally {
     setIsLoading(false);
   }
 };
-
-  //   // Placeholder: this would later trigger your MCP client call
-  //   const simulatedResult = `We detected a problem: ${problem}. Here's what you should do...`;
-  //   const simulatedChain = [
-  //     'Checked car configuration — OK',
-  //     'Checked subscription — Expired',
-  //     'Determined likely cause — Subscription issue',
-  //     'Generated response to user'
-  //   ];
-
-  //   setResult(simulatedResult);
-  //   setChainOfThought(simulatedChain);
-  // };
 
 // Render
 return (
