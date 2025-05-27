@@ -43,7 +43,7 @@ export const handler: Handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(response),
+      body: JSON.stringify(subCheckerResponse),
     };
   } catch (error) {
     console.error("Help orchestrator failed:", error);
