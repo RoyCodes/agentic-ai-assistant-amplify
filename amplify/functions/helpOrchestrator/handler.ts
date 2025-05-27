@@ -12,6 +12,11 @@ export const handler: Handler = async (event) => {
     const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
     console.log("Parsed body:", JSON.stringify(body, null, 2));
 
+    if (!SUBSCRIPTION_CHECKER_FUNCTION_NAME) {
+      throw new Error("SUBSCRIPTION_CHECKER_FUNCTION_NAME environment variable is not set. Cannot invoke subscriptionChecker.");
+    }
+
+
     const vehicleId = body.params?.vehicleId ?? 'demo-vehicle';
 
     // call the subscription checker
@@ -27,6 +32,7 @@ export const handler: Handler = async (event) => {
     
     const response = await lambda.send(command);
     console.log("Raw Lambda response from subscriptionChecker:", response);
+
     const responseString = new TextDecoder().decode(response.Payload);
     const subStatus = JSON.parse(responseString);
 

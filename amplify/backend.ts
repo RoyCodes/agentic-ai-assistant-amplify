@@ -44,17 +44,17 @@ const helpHttpApi = new HttpApi(helpOrchestratorApiStack, 'HelpHttpApi', {
   createDefaultStage: true,
 });
 
-// Create an HTTP Lambda integration for helpOrchestrator
-const helpLambdaIntegration = new HttpLambdaIntegration(
-  'HelpLambdaIntegration',
-  backend.helpOrchestrator.resources.lambda
-);
-
 // Amplify Gen 2 wraps Lambda resources in higher-level constructs that don’t expose CDK methods
 // like .addEnvironment() or .addToRolePolicy(). We need to unwrap the underlying CDK Function using
 // .node.defaultChild so that we can wire up Lambda-to-Lambda invocations.
-const helpOrchestratorCDK = backend.helpOrchestrator.resources.lambda.node.defaultChild as LambdaFunction;
-const subscriptionCheckerCDK = backend.subscriptionChecker.resources.lambda.node.defaultChild as LambdaFunction;
+const helpOrchestratorCDK = backend.helpOrchestrator.resources.lambda as LambdaFunction;
+const subscriptionCheckerCDK = backend.subscriptionChecker.resources.lambda as LambdaFunction;
+
+// Create an HTTP Lambda integration for helpOrchestrator
+const helpLambdaIntegration = new HttpLambdaIntegration(
+  'HelpLambdaIntegration',
+  helpOrchestratorCDK
+);
 
 // Add IAM permission to invoke subscriptionChecker
 helpOrchestratorCDK.addToRolePolicy(
