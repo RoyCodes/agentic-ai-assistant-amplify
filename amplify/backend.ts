@@ -5,6 +5,7 @@ import { helpOrchestrator } from './functions/helpOrchestrator/resource';
 import { subscriptionChecker } from './functions/subscriptionChecker/resource';
 import { Stack } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Function as LambdaFunction } from 'aws-cdk-lib/aws-lambda'; 
 import {
   CorsHttpMethod,
   HttpApi,
@@ -12,11 +13,6 @@ import {
 } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpUserPoolAuthorizer } from 'aws-cdk-lib/aws-apigatewayv2-authorizers';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
-
-
-/**
- * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
- */
 
 const backend = defineBackend({
   auth,
@@ -37,7 +33,6 @@ const userPoolAuthorizer = new HttpUserPoolAuthorizer(
   }
 );
 
-
 // Create HTTP API for client -> helpOrchestrator
 const helpHttpApi = new HttpApi(helpOrchestratorApiStack, 'HelpHttpApi', {
   apiName: 'HelpApi',
@@ -55,14 +50,24 @@ const helpLambdaIntegration = new HttpLambdaIntegration(
   backend.helpOrchestrator.resources.lambda
 );
 
-// Allow helpOrchestrator to call subscriptionChecker
-backend.helpOrchestrator.resources.lambda.addToRolePolicy(
+// Amplify Gen 2 wraps Lambda resources in higher-level constructs that don’t expose CDK methods
+// like .addEnvironment() or .addToRolePolicy(). We need to unwrap the underlying CDK Function using
+// .node.defaultChild so that we can wire up Lambda-to-Lambda invocations.
+const helpOrchestratorCDK = backend.helpOrchestrator.resources.lambda.node.defaultChild as LambdaFunction;
+const subscriptionCheckerCDK = backend.subscriptionChecker.resources.lambda.node.defaultChild as LambdaFunction;
+
+// Add IAM permission to invoke subscriptionChecker
+helpOrchestratorCDK.addToRolePolicy(
   new iam.PolicyStatement({
     actions: ['lambda:InvokeFunction'],
-    resources: [
-      backend.subscriptionChecker.resources.lambda.functionArn
-    ]
+    resources: [subscriptionCheckerCDK.functionArn],
   })
+);
+
+// Pass real function name to helpOrchestrator as an env var
+helpOrchestratorCDK.addEnvironment(
+  'SUBSCRIPTION_CHECKER_FUNCTION_NAME',
+  subscriptionCheckerCDK.functionName
 );
 
 // Add /help route

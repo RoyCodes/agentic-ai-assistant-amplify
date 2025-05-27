@@ -3,6 +3,9 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 
 const lambda = new LambdaClient({});
 
+// Get the function name from environment variable
+const SUBSCRIPTION_CHECKER_FUNCTION_NAME = process.env.SUBSCRIPTION_CHECKER_FUNCTION_NAME;
+
 export const handler: Handler = async (event) => {
   try {
     console.log("Received event:", JSON.stringify(event, null, 2));
@@ -13,7 +16,7 @@ export const handler: Handler = async (event) => {
 
     // call the subscription checker
     const command = new InvokeCommand({
-      FunctionName: 'subscription-checker',
+      FunctionName: SUBSCRIPTION_CHECKER_FUNCTION_NAME,
       Payload: Buffer.from(JSON.stringify({
         jsonrpc: '2.0',
         method: 'subscriptionChecker',
