@@ -37,9 +37,12 @@ export const handler: Handler = async (event) => {
     const response = await lambda.send(command);
     console.log("Raw Lambda response from subscriptionChecker:", response);
 
-    const responseString = new TextDecoder().decode(response.Payload);
-    const subCheckerResponse = JSON.parse(responseString);
-    console.log("Parsed subscriptionChecker response:", subCheckerResponse);
+    const responseString = response.Payload ? new TextDecoder().decode(response.Payload) : '{}';
+    const lambdaProxyResponse = JSON.parse(responseString); 
+    console.log("Parsed Lambda Proxy Response:", lambdaProxyResponse);
+
+    const subCheckerResponse = JSON.parse(lambdaProxyResponse.body); 
+    console.log("Parsed subscriptionChecker response (final):", subCheckerResponse); 
 
     if (subCheckerResponse.jsonrpc === '2.0' && 'result' in subCheckerResponse) {
       return {
