@@ -3,17 +3,13 @@ import type { Handler } from 'aws-lambda';
 export const handler: Handler = async (event, context) => {
     console.log("Received event in subscriptionChecker:", JSON.stringify(event, null, 2));
     try {
-        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
-        console.log("Parsed body in subscriptionChecker:", JSON.stringify(body, null, 2));
-
-        const vehicleId = body.params?.vehicleId ?? 'unknown';
-
+        const vehicleId = event.params?.vehicleId ?? 'unknown';
         const features = ['Remote Start', 'Geofencing', 'Vehicle Finder', 'Speed Alerts', 'Remote Unlock'];
-
         const result = features.map((name) => ({
-        name,
-        status: Math.random() > 0.5 ? 'Valid' : 'Expired'
-    }));
+            name,
+            status: Math.random() > 0.5 ? 'Valid' : 'Expired'
+        })
+    );
 
     return {
       statusCode: 200,
@@ -25,7 +21,7 @@ export const handler: Handler = async (event, context) => {
         result: {
           features: result
         },
-        id: body.id ?? null
+        id: event.id ?? null
       })
     };
   } catch (err) {
@@ -41,7 +37,7 @@ export const handler: Handler = async (event, context) => {
           code: -32603,
           message: 'Internal error in subscriptionChecker'
         },
-        id: event.body?.id ?? null
+        id: (event as any).id ?? null
       })
     };
   }
