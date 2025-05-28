@@ -5,6 +5,7 @@ const lambda = new LambdaClient({});
 
 // Get the function name from environment variable
 const SUBSCRIPTION_CHECKER_FUNCTION_NAME = process.env.SUBSCRIPTION_CHECKER_FUNCTION_NAME;
+const CONFIG_CHECKER_FUNCTION_NAME = process.env.CONFIG_CHECKER_FUNCTION_NAME;
 
 export const handler: Handler = async (event) => {
   try {
@@ -28,13 +29,13 @@ export const handler: Handler = async (event) => {
     };
 
     // call the subscription checker
-    const command = new InvokeCommand({
+    const callSubscriptionChecker = new InvokeCommand({
       FunctionName: SUBSCRIPTION_CHECKER_FUNCTION_NAME,
       InvocationType: 'RequestResponse',
       Payload: Buffer.from(JSON.stringify(subscriptionCheckerPayload)),
     });
     
-    const response = await lambda.send(command);
+    const response = await lambda.send(callSubscriptionChecker);
     console.log("Raw Lambda response from subscriptionChecker:", response);
 
     const responseString = response.Payload ? new TextDecoder().decode(response.Payload) : '{}';
