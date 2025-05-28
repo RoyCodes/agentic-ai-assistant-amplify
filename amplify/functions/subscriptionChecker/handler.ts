@@ -1,15 +1,18 @@
 import type { Handler } from 'aws-lambda';
 
 export const handler: Handler = async (event, context) => {
-  try {
-    const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
-    const vehicleId = body.params?.vehicleId ?? 'unknown';
+    console.log("Received event in subscriptionChecker:", JSON.stringify(event, null, 2));
+    try {
+        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        console.log("Parsed body in subscriptionChecker:", JSON.stringify(body, null, 2));
 
-    const features = ['Remote Start', 'Geofencing', 'Vehicle Finder', 'Speed Alerts', 'Remote Unlock'];
+        const vehicleId = body.params?.vehicleId ?? 'unknown';
 
-    const result = features.map((name) => ({
-      name,
-      status: Math.random() > 0.5 ? 'Valid' : 'Expired'
+        const features = ['Remote Start', 'Geofencing', 'Vehicle Finder', 'Speed Alerts', 'Remote Unlock'];
+
+        const result = features.map((name) => ({
+        name,
+        status: Math.random() > 0.5 ? 'Valid' : 'Expired'
     }));
 
     return {
