@@ -16,7 +16,7 @@ export const handler: Handler = async (event) => {
       throw new Error("SUBSCRIPTION_CHECKER_FUNCTION_NAME environment variable is not set. Cannot invoke subscriptionChecker.");
     }
 
-
+    const problemType = body.params?.problemType;
     const vehicleId = body.params?.vehicleId ?? 'demo-vehicle';
 
 
@@ -41,22 +41,62 @@ export const handler: Handler = async (event) => {
     const subCheckerResponse = JSON.parse(responseString);
     console.log("Parsed subscriptionChecker response:", subCheckerResponse);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(subCheckerResponse),
-    };
-  } catch (error) {
-    console.error("Help orchestrator failed:", error);
+    if (subCheckerResponse.jsonrpc === '2.0' && 'result' in subCheckerResponse) {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          result: subCheckerResponse.result,
+          id: subCheckerResponse.id || body.id || null
+        }),
+      };
+    } 
+    else if (subCheckerResponse.jsonrpc === '2.0' && 'error' in subCheckerResponse) {
+      return{
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          error: subCheckerResponse.error,
+          id: subCheckerResponse.id || body.id || null
+          }),
+        };
+      }
+      else {
+        throw new Error("Unexpected JSON-RPC response format from subscriptionChecker.");
+      }
+
+    } catch (error) {
+      console.error("Help orchestrator failed:", error);
+
+      let errorMessage = 'An unexpected internal error occurred in helpOrchestrator.';
+      let errorCode = -32000; // Default JSON-RPC Internal error code
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error("Error stack", error.stack);
+      } else if (typeof error === 'object' && error != null && 'message' in error) {
+        errorMessage = (error as any).message;
+      }
 
     return {
-      statusCode: 400,
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         jsonrpc: '2.0',
         error: {
-          code: -32600,
-          message: 'Invalid Request',
+          code: errorCode,
+          message: `Internal Server Error: ${errorMessage}`,
+          data: null
         },
-        id: null,
+        id: event.body?.id || null, 
       }),
     };
   }
